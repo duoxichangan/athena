@@ -1,0 +1,24 @@
+uploads/
+outputs/
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.DS_Store
+
+# Frontend dependencies and generated builds
+frontend/node_modules/
+node_modules/
+static/dist/
+frontend/dist/
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
+# Large model weights
+*.pt
+*.onnx
+*.engine
