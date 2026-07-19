@@ -8,7 +8,7 @@ export function Header() {
         <div className="nav-inner">
           <div className="nav-brand">
             <AthenaLogo />
-            <span className="brand-title">Athena</span>
+            <span className="brand-title">篮眸</span>
             <span className="brand-sub hidden-sm">运动员姿态识别平台</span>
           </div>
           <span className="brand-sub hidden-sm">Basketball Pose Analysis</span>
@@ -218,7 +218,7 @@ export function Footer() {
     <footer className="footer-wrap">
       <div className="glass-footer">
         <div className="footer-inner">
-          <span className="footer-text">Athena 运动员姿态识别平台</span>
+          <span className="footer-text">篮眸 运动员姿态识别平台</span>
           <span className="footer-sub">Powered by Ultralytics YOLO Pose · FastAPI · DeepSeek</span>
         </div>
       </div>
@@ -229,7 +229,7 @@ export function Footer() {
 /* ---------------- Icons ---------------- */
 function AthenaLogo() {
   return (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-label="Athena">
+    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-label="篮眸">
       <circle cx="16" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
       <line x1="16" y1="11" x2="16" y2="18" stroke="currentColor" strokeWidth="2" />
       <line x1="16" y1="14" x2="10" y2="20" stroke="currentColor" strokeWidth="2" />

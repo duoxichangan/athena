@@ -45,7 +45,7 @@ export default function PlayerCard({ taskId, pinfo, clipUrl }) {
           </div>
         </div>
 
-        <AnalysisPanel taskId={taskId} trackId={tid} />
+        <AnalysisPanel taskId={taskId} trackId={tid} clipUrl={clipUrl} />
 
         <div className="player-card-footer">
           <a

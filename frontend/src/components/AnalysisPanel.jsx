@@ -1,11 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { analyzePlayer } from '../api.js'
 
 function escapeText(s) {
   return s == null ? '' : String(s)
 }
 
-export default function AnalysisPanel({ taskId, trackId }) {
+export default function AnalysisPanel({ taskId, trackId, clipUrl }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState(null) // {analysis, cached, error}
@@ -26,6 +29,22 @@ export default function AnalysisPanel({ taskId, trackId }) {
 
   const a = data?.analysis
 
+  useEffect(() => {
+    if (!open) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [open])
+
   return (
     <div className="analysis-wrap">
       <div className="analysis-trigger">
@@ -40,55 +59,78 @@ export default function AnalysisPanel({ taskId, trackId }) {
         </button>
       </div>
 
-      {open && (
-        <div className="analysis-result">
-          {loading && (
-            <div className="analysis-thinking">
-              <span className="dot" />
-              <span className="dot" />
-              <span className="dot" />
-              <span>AI 正在折射动作细节...</span>
-            </div>
-          )}
-
-          {!loading && data?.error && (
-            <div className="analysis-error">{escapeText(data.error)}</div>
-          )}
-
-          {!loading && a && (
-            <div className="analysis-content">
-              {data.cached && <span className="cached-badge">缓存结果</span>}
-
-              {a.strengths?.length > 0 && (
-                <Section title="优势" variant="strengths" items={a.strengths} />
-              )}
-              {a.weaknesses?.length > 0 && (
-                <Section title="短板" variant="weaknesses" items={a.weaknesses} />
-              )}
-              {a.summary && (
-                <div className="analysis-section">
-                  <div className="section-title summary">总体评价</div>
-                  <p className="summary-text">{escapeText(a.summary)}</p>
-                </div>
-              )}
-              {a.recommendations?.length > 0 && (
-                <Section title="改进建议" variant="recommendations" items={a.recommendations} />
-              )}
-              {a.additional_angles?.length > 0 && (
-                <Section title="补充观察建议" variant="additional" items={a.additional_angles} />
-              )}
-
-              {!a.strengths && !a.weaknesses && !a.summary && !a.recommendations && !a.additional_angles && a.raw_response && (
-                <p className="summary-text">{escapeText(a.raw_response)}</p>
-              )}
-
-              <button className="btn-reanalyze" onClick={() => run(true)}>
-                重新分析
+      {open && createPortal(
+        <div className="analysis-modal-backdrop" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setOpen(false)
+        }}>
+          <section
+            className="analysis-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`analysis-title-${trackId}`}
+          >
+            <header className="analysis-modal-header">
+              <div>
+                <span className="analysis-modal-eyebrow">篮眸 · 运动表现报告</span>
+                <h2 id={`analysis-title-${trackId}`}>球员 {trackId} · AI 分析</h2>
+              </div>
+              <button className="analysis-modal-close" type="button" onClick={() => setOpen(false)} aria-label="关闭分析弹窗">
+                ×
               </button>
+            </header>
+
+            <div className="analysis-modal-grid">
+              <aside className="analysis-modal-video">
+                <div className="analysis-video-label">动作视频</div>
+                {clipUrl ? (
+                  <video src={clipUrl} controls loop preload="metadata" />
+                ) : (
+                  <div className="analysis-video-empty">该球员视频仍在生成中</div>
+                )}
+                <p>播放视频，对照右侧建议逐项检查动作细节。</p>
+              </aside>
+
+              <div className="analysis-modal-report">
+                {loading && <AnalysisThinking />}
+                {!loading && data?.error && <div className="analysis-error">{escapeText(data.error)}</div>}
+                {!loading && a && <AnalysisContent analysis={a} cached={data.cached} onReanalyze={() => run(true)} />}
+              </div>
             </div>
-          )}
+          </section>
+        </div>,
+        document.body,
+      )}
+    </div>
+  )
+}
+
+function AnalysisThinking() {
+  return (
+    <div className="analysis-thinking">
+      <span className="dot" /><span className="dot" /><span className="dot" />
+      <span>AI 正在分析动作细节...</span>
+    </div>
+  )
+}
+
+function AnalysisContent({ analysis: a, cached, onReanalyze }) {
+  return (
+    <div className="analysis-content">
+      {cached && <span className="cached-badge">缓存结果</span>}
+      {a.strengths?.length > 0 && <Section title="优势" variant="strengths" items={a.strengths} />}
+      {a.weaknesses?.length > 0 && <Section title="短板" variant="weaknesses" items={a.weaknesses} />}
+      {a.summary && (
+        <div className="analysis-section">
+          <div className="section-title summary">总体评价</div>
+          <Markdown content={a.summary} className="summary-text" />
         </div>
       )}
+      {a.recommendations?.length > 0 && <Section title="改进建议" variant="recommendations" items={a.recommendations} />}
+      {a.additional_angles?.length > 0 && <Section title="补充观察建议" variant="additional" items={a.additional_angles} />}
+      {!a.strengths && !a.weaknesses && !a.summary && !a.recommendations && !a.additional_angles && a.raw_response && (
+        <Markdown content={a.raw_response} className="summary-text" />
+      )}
+      <button className="btn-reanalyze" onClick={onReanalyze}>重新分析</button>
     </div>
   )
 }
@@ -99,9 +141,26 @@ function Section({ title, variant, items }) {
       <div className={`section-title ${variant}`}>{title}</div>
       <ul className={`analysis-list ${variant}-list`}>
         {items.map((it, i) => (
-          <li key={i}>{escapeText(it)}</li>
+          <li key={i}><Markdown content={it} compact /></li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+function Markdown({ content, className = '', compact = false }) {
+  return (
+    <div className={`markdown-body${compact ? ' markdown-compact' : ''}${className ? ` ${className}` : ''}`}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          a: ({ children, ...props }) => (
+            <a {...props} target="_blank" rel="noopener noreferrer">{children}</a>
+          ),
+        }}
+      >
+        {escapeText(content)}
+      </ReactMarkdown>
     </div>
   )
 }

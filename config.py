@@ -117,7 +117,6 @@ GROUP_COLORS = {
 # ⚠️ 重要：请在此处填入你的 DeepSeek API Key
 #    优先使用环境变量 DEEPSEEK_API_KEY，若未设置则使用下方的默认值
 #    注意不要将包含真实 API Key 的 config.py 提交到 git
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/anthropic")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 AI_MAX_TOKENS = int(os.getenv("DEEPSEEK_MAX_TOKENS", "2048"))

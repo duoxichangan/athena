@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Header, UploadSection, ProgressSection, StatsGrid, ActionBar, ErrorSection, Footer } from './components/Sections.jsx'
 import PlayerCard from './components/PlayerCard.jsx'
+import SandTableModal from './components/SandTableModal.jsx'
 import { uploadFile, pollStatus, fetchPoseData } from './api.js'
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [elapsed, setElapsed] = useState(0)
   const [activeStep, setActiveStep] = useState(0)
+  const [sandboxOpen, setSandboxOpen] = useState(false)
 
   const timerRef = useRef(null)
   const startRef = useRef(0)
@@ -84,6 +86,7 @@ export default function App() {
   async function handleSubmit(file) {
     setPhase('processing')
     setActiveStep(0)
+    setSandboxOpen(false)
     setElapsed(0)
     setError('')
     setResult(null)
@@ -179,6 +182,13 @@ export default function App() {
               跟踪到 <span className="player-count-num">{result.unique_players}</span> 名球员
             </h2>
 
+            <div className="sandbox-launch-wrap">
+              <button className="btn-primary sandbox-launch" onClick={() => setSandboxOpen(true)} disabled={!poseData}>
+                <span className="btn-primary-label">{poseData ? '打开训练战术沙盘' : '正在载入沙盘数据…'}</span>
+              </button>
+              <span>多人位置 · 移动轨迹 · 视频同步</span>
+            </div>
+
             <div className="player-gallery">
               {players.map((p) => (
                 <PlayerCard
@@ -191,6 +201,7 @@ export default function App() {
             </div>
 
             <ActionBar taskId={taskId} result={result} onReset={reset} />
+            {sandboxOpen && <SandTableModal poseData={poseData} taskId={taskId} onClose={() => setSandboxOpen(false)} />}
           </section>
         )}
 
