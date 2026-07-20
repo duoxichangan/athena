@@ -3,7 +3,7 @@ import SkeletonCanvas from './SkeletonCanvas.jsx'
 import AnalysisPanel from './AnalysisPanel.jsx'
 import { playerDataUrl, playerClipUrl } from '../api.js'
 
-export default function PlayerCard({ taskId, pinfo, clipUrl }) {
+export default function PlayerCard({ taskId, pinfo, clipUrl, playerName, onRename }) {
   const videoRef = useRef(null)
   const tid = pinfo.track_id
   const firstFrame = pinfo.frames?.[0] || null
@@ -20,7 +20,11 @@ export default function PlayerCard({ taskId, pinfo, clipUrl }) {
     <article className="player-card">
       <div className="player-card-inner">
         <div className="player-card-header">
-          <span className="player-id-badge">ID: {tid}</span>
+          <span className="player-id-badge">{playerName}</span>
+          <button className="player-rename" type="button" onClick={() => {
+            const nextName = window.prompt('为该学员命名', playerName)
+            if (nextName?.trim()) onRename(nextName.trim())
+          }}>命名</button>
           <span className="player-card-stats">
             可见 {pinfo.total_frames_visible} 帧 · {pinfo.visibility_pct}%
           </span>
@@ -45,7 +49,7 @@ export default function PlayerCard({ taskId, pinfo, clipUrl }) {
           </div>
         </div>
 
-        <AnalysisPanel taskId={taskId} trackId={tid} clipUrl={clipUrl} />
+        <AnalysisPanel taskId={taskId} trackId={tid} playerName={playerName} clipUrl={clipUrl} />
 
         <div className="player-card-footer">
           <a

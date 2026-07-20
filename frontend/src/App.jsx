@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Header, UploadSection, ProgressSection, StatsGrid, ActionBar, ErrorSection, Footer } from './components/Sections.jsx'
 import PlayerCard from './components/PlayerCard.jsx'
 import SandTableModal from './components/SandTableModal.jsx'
+import { buildPlayerLabels } from './components/sandboxUtils.js'
 import { uploadFile, pollStatus, fetchPoseData } from './api.js'
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
   const [elapsed, setElapsed] = useState(0)
   const [activeStep, setActiveStep] = useState(0)
   const [sandboxOpen, setSandboxOpen] = useState(false)
+  const [customPlayerNames, setCustomPlayerNames] = useState({})
 
   const timerRef = useRef(null)
   const startRef = useRef(0)
@@ -91,6 +93,7 @@ export default function App() {
     setError('')
     setResult(null)
     setPoseData(null)
+    setCustomPlayerNames({})
 
     try {
       const data = await uploadFile(file)
@@ -148,10 +151,12 @@ export default function App() {
     setError('')
     setElapsed(0)
     setActiveStep(0)
+    setCustomPlayerNames({})
   }
 
   // Build player list
   let players = []
+  let playerLabels = {}
   let clips = {}
   if (poseData && result) {
     clips = result.player_clips || {}
@@ -160,7 +165,8 @@ export default function App() {
     const playersMap = poseData.players || {}
     players = Object.keys(playersMap)
       .map((k) => playersMap[k])
-      .sort((a, b) => (a.track_id || 0) - (b.track_id || 0))
+      .sort((a, b) => (a.first_seen_frame || 0) - (b.first_seen_frame || 0))
+    playerLabels = buildPlayerLabels(players, customPlayerNames)
   }
 
   return (
@@ -195,13 +201,15 @@ export default function App() {
                   key={p.track_id}
                   taskId={taskId}
                   pinfo={p}
+                  playerName={playerLabels[p.track_id]}
+                  onRename={(name) => setCustomPlayerNames((current) => ({ ...current, [p.track_id]: name }))}
                   clipUrl={normClip(clips, p.track_id) ? `/player-clip/${taskId}/${p.track_id}` : null}
                 />
               ))}
             </div>
 
             <ActionBar taskId={taskId} result={result} onReset={reset} />
-            {sandboxOpen && <SandTableModal poseData={poseData} taskId={taskId} onClose={() => setSandboxOpen(false)} />}
+            {sandboxOpen && <SandTableModal poseData={poseData} taskId={taskId} playerLabels={playerLabels} onClose={() => setSandboxOpen(false)} />}
           </section>
         )}
 

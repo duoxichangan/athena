@@ -8,7 +8,7 @@ function escapeText(s) {
   return s == null ? '' : String(s)
 }
 
-export default function AnalysisPanel({ taskId, trackId, clipUrl }) {
+export default function AnalysisPanel({ taskId, trackId, playerName = `学员 ${trackId}`, clipUrl }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState(null) // {analysis, cached, error}
@@ -72,7 +72,7 @@ export default function AnalysisPanel({ taskId, trackId, clipUrl }) {
             <header className="analysis-modal-header">
               <div>
                 <span className="analysis-modal-eyebrow">篮眸 · 运动表现报告</span>
-                <h2 id={`analysis-title-${trackId}`}>球员 {trackId} · AI 分析</h2>
+                <h2 id={`analysis-title-${trackId}`}>{playerName} · AI 分析</h2>
               </div>
               <button className="analysis-modal-close" type="button" onClick={() => setOpen(false)} aria-label="关闭分析弹窗">
                 ×

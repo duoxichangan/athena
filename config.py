@@ -1,5 +1,5 @@
 """
-Athena — 运动员姿态识别平台 配置文件
+Athena 鈥?杩愬姩鍛樺Э鎬佽瘑鍒钩鍙?閰嶇疆鏂囦欢
 """
 
 import os
@@ -11,79 +11,79 @@ UPLOAD_DIR = BASE_DIR / "uploads"
 OUTPUT_DIR = BASE_DIR / "outputs"
 
 # ---- Model ----
-MODEL_NAME = "yolo26n-pose.pt"  # 首次运行时自动下载
-CONF_THRESHOLD = 0.5             # 关键点置信度阈值
-IOU_THRESHOLD = 0.7              # NMS IOU 阈值
-IMGSZ = 320                      # 推理分辨率（320=最快速度）
-FRAME_SKIP = 3                   # 跳帧数（3=每3帧处理一次，3x 提速）
+MODEL_NAME = "yolo26n-pose.pt"  # 棣栨杩愯鏃惰嚜鍔ㄤ笅杞?
+CONF_THRESHOLD = 0.5             # 鍏抽敭鐐圭疆淇″害闃堝€?
+IOU_THRESHOLD = 0.7              # NMS IOU 闃堝€?
+IMGSZ = 320                      # 鎺ㄧ悊鍒嗚鲸鐜囷紙320=鏈€蹇€熷害锛?
+FRAME_SKIP = 3                   # 璺冲抚鏁帮紙3=姣?甯у鐞嗕竴娆★紝3x 鎻愰€燂級
 
 # ---- Tracking ----
-TRACKER_CONFIG = "bytetrack.yaml"   # 跟踪器配置: bytetrack / botsort / ocsort
-TRACK_CONF_THRESHOLD = 0.4          # 跟踪置信度（提高以减少误检）
-MIN_VISIBILITY_PCT = 5.0            # 球员最少可见帧占比 (%)，低于此值的 track 视为噪声丢弃
-MIN_BBOX_AREA = 1000                # 最小 bbox 面积 (px²)，过滤远处小人头
+TRACKER_CONFIG = "bytetrack.yaml"   # 璺熻釜鍣ㄩ厤缃? bytetrack / botsort / ocsort
+TRACK_CONF_THRESHOLD = 0.4          # 璺熻釜缃俊搴︼紙鎻愰珮浠ュ噺灏戣妫€锛?
+MIN_VISIBILITY_PCT = 5.0            # 鐞冨憳鏈€灏戝彲瑙佸抚鍗犳瘮 (%)锛屼綆浜庢鍊肩殑 track 瑙嗕负鍣０涓㈠純
+MIN_BBOX_AREA = 1000                # 鏈€灏?bbox 闈㈢Н (px虏)锛岃繃婊よ繙澶勫皬浜哄ご
 
 # ---- Video ----
 SUPPORTED_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
-MAX_UPLOAD_SIZE_MB = 200         # 最大上传文件大小 (MB)
-OUTPUT_FPS = 30                  # 输出视频帧率（0 表示保持原视频帧率）
-PLAYER_CLIP_CODEC = "avc1"       # 浏览器兼容 H.264 编码；若不可用则回退 webm
+MAX_UPLOAD_SIZE_MB = 200         # 鏈€澶т笂浼犳枃浠跺ぇ灏?(MB)
+OUTPUT_FPS = 30                  # 杈撳嚭瑙嗛甯х巼锛? 琛ㄧず淇濇寔鍘熻棰戝抚鐜囷級
+PLAYER_CLIP_CODEC = "avc1"       # 娴忚鍣ㄥ吋瀹?H.264 缂栫爜锛涜嫢涓嶅彲鐢ㄥ垯鍥為€€ webm
 
 # ---- Skeleton Drawing ----
-# 每个人的骨架颜色列表（按 track_id 取模，同一个人颜色跨帧一致）
+# 姣忎釜浜虹殑楠ㄦ灦棰滆壊鍒楄〃锛堟寜 track_id 鍙栨ā锛屽悓涓€涓汉棰滆壊璺ㄥ抚涓€鑷达級
 PERSON_COLORS = [
-    (0, 255, 0),      # 绿色
-    (255, 0, 0),      # 蓝色
-    (0, 0, 255),      # 红色
-    (255, 255, 0),    # 青色
-    (255, 0, 255),    # 品红
-    (0, 255, 255),    # 黄色
-    (128, 255, 0),    # 浅绿
-    (255, 128, 0),    # 橙色
-    (0, 128, 255),    # 天蓝
-    (128, 0, 255),    # 紫色
-    (255, 255, 128),  # 淡黄
-    (255, 128, 128),  # 浅红
-    (128, 255, 128),  # 薄荷绿
-    (128, 128, 255),  # 淡蓝
-    (255, 128, 255),  # 粉红
-    (128, 255, 255),  # 浅青
-    (192, 192, 255),  # 薰衣草
-    (255, 192, 128),  # 桃色
-    (128, 255, 192),  # 青绿
-    (192, 128, 255),  # 淡紫
+    (0, 255, 0),      # 缁胯壊
+    (255, 0, 0),      # 钃濊壊
+    (0, 0, 255),      # 绾㈣壊
+    (255, 255, 0),    # 闈掕壊
+    (255, 0, 255),    # 鍝佺孩
+    (0, 255, 255),    # 榛勮壊
+    (128, 255, 0),    # 娴呯豢
+    (255, 128, 0),    # 姗欒壊
+    (0, 128, 255),    # 澶╄摑
+    (128, 0, 255),    # 绱壊
+    (255, 255, 128),  # 娣￠粍
+    (255, 128, 128),  # 娴呯孩
+    (128, 255, 128),  # 钖勮嵎缁?
+    (128, 128, 255),  # 娣¤摑
+    (255, 128, 255),  # 绮夌孩
+    (128, 255, 255),  # 娴呴潚
+    (192, 192, 255),  # 钖拌。鑽?
+    (255, 192, 128),  # 妗冭壊
+    (128, 255, 192),  # 闈掔豢
+    (192, 128, 255),  # 娣＄传
 ]
 
 KEYPOINT_RADIUS = 5
 SKELETON_LINE_WIDTH = 2
-KEYPOINT_CONF_ALPHA = True      # 低置信度关键点半透明显示
-ID_LABEL_FONT_SCALE = 0.7       # track_id 标签字体大小
+KEYPOINT_CONF_ALPHA = True      # 浣庣疆淇″害鍏抽敭鐐瑰崐閫忔槑鏄剧ず
+ID_LABEL_FONT_SCALE = 0.7       # track_id 鏍囩瀛椾綋澶у皬
 
-# ---- COCO 17 关键点骨架连接定义 ----
-# 每个 tuple 是一对关键点索引 (从0开始)
+# ---- COCO 17 鍏抽敭鐐归鏋惰繛鎺ュ畾涔?----
+# 姣忎釜 tuple 鏄竴瀵瑰叧閿偣绱㈠紩 (浠?寮€濮?
 SKELETON_EDGES = [
-    # 面部
-    (0, 1),   # nose → left_eye
-    (0, 2),   # nose → right_eye
-    (1, 3),   # left_eye → left_ear
-    (2, 4),   # right_eye → right_ear
-    # 上半身
-    (5, 6),   # left_shoulder → right_shoulder
-    (5, 7),   # left_shoulder → left_elbow
-    (6, 8),   # right_shoulder → right_elbow
-    (7, 9),   # left_elbow → left_wrist
-    (8, 10),  # right_elbow → right_wrist
-    (5, 11),  # left_shoulder → left_hip
-    (6, 12),  # right_shoulder → right_hip
-    # 下半身
-    (11, 12), # left_hip → right_hip
-    (11, 13), # left_hip → left_knee
-    (12, 14), # right_hip → right_knee
-    (13, 15), # left_knee → left_ankle
-    (14, 16), # right_knee → right_ankle
+    # 闈㈤儴
+    (0, 1),   # nose 鈫?left_eye
+    (0, 2),   # nose 鈫?right_eye
+    (1, 3),   # left_eye 鈫?left_ear
+    (2, 4),   # right_eye 鈫?right_ear
+    # 涓婂崐韬?
+    (5, 6),   # left_shoulder 鈫?right_shoulder
+    (5, 7),   # left_shoulder 鈫?left_elbow
+    (6, 8),   # right_shoulder 鈫?right_elbow
+    (7, 9),   # left_elbow 鈫?left_wrist
+    (8, 10),  # right_elbow 鈫?right_wrist
+    (5, 11),  # left_shoulder 鈫?left_hip
+    (6, 12),  # right_shoulder 鈫?right_hip
+    # 涓嬪崐韬?
+    (11, 12), # left_hip 鈫?right_hip
+    (11, 13), # left_hip 鈫?left_knee
+    (12, 14), # right_hip 鈫?right_knee
+    (13, 15), # left_knee 鈫?left_ankle
+    (14, 16), # right_knee 鈫?right_ankle
 ]
 
-# 关键点名称（COCO 格式，17 个）
+# 鍏抽敭鐐瑰悕绉帮紙COCO 鏍煎紡锛?7 涓級
 KEYPOINT_NAMES = [
     "nose", "left_eye", "right_eye", "left_ear", "right_ear",
     "left_shoulder", "right_shoulder", "left_elbow", "right_elbow",
@@ -91,7 +91,7 @@ KEYPOINT_NAMES = [
     "left_knee", "right_knee", "left_ankle", "right_ankle",
 ]
 
-# 关键点按部位分组（用于颜色区分）
+# 鍏抽敭鐐规寜閮ㄤ綅鍒嗙粍锛堢敤浜庨鑹插尯鍒嗭級
 KEYPOINT_GROUPS = {
     "head": [0, 1, 2, 3, 4],
     "torso": [5, 6, 11, 12],
@@ -102,85 +102,86 @@ KEYPOINT_GROUPS = {
 }
 
 GROUP_COLORS = {
-    "head": (255, 255, 255),       # 白色
-    "torso": (0, 255, 255),        # 黄色
-    "left_arm": (255, 0, 0),       # 蓝色
-    "right_arm": (0, 255, 0),      # 绿色
-    "left_leg": (255, 0, 255),     # 品红
-    "right_leg": (0, 255, 255),    # 黄色
+    "head": (255, 255, 255),       # 鐧借壊
+    "torso": (0, 255, 255),        # 榛勮壊
+    "left_arm": (255, 0, 0),       # 钃濊壊
+    "right_arm": (0, 255, 0),      # 缁胯壊
+    "left_leg": (255, 0, 255),     # 鍝佺孩
+    "right_leg": (0, 255, 255),    # 榛勮壊
 }
 
-# ══════════════════════════════════════════════════════════════════════════════
-# AI / LLM — DeepSeek Anthropic-兼容 API 配置
-# ══════════════════════════════════════════════════════════════════════════════
+# 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
+# AI / LLM 鈥?DeepSeek Anthropic-鍏煎 API 閰嶇疆
+# 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
 
-# ⚠️ 重要：请在此处填入你的 DeepSeek API Key
-#    优先使用环境变量 DEEPSEEK_API_KEY，若未设置则使用下方的默认值
-#    注意不要将包含真实 API Key 的 config.py 提交到 git
+# 鈿狅笍 閲嶈锛氳鍦ㄦ澶勫～鍏ヤ綘鐨?DeepSeek API Key
+#    浼樺厛浣跨敤鐜鍙橀噺 DEEPSEEK_API_KEY锛岃嫢鏈缃垯浣跨敤涓嬫柟鐨勯粯璁ゅ€?
+#    娉ㄦ剰涓嶈灏嗗寘鍚湡瀹?API Key 鐨?config.py 鎻愪氦鍒?git
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/anthropic")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 AI_MAX_TOKENS = int(os.getenv("DEEPSEEK_MAX_TOKENS", "2048"))
 AI_TEMPERATURE = float(os.getenv("DEEPSEEK_TEMPERATURE", "0.7"))
 AI_TIMEOUT_SECONDS = int(os.getenv("DEEPSEEK_TIMEOUT_SECONDS", "90"))
-AI_MIN_FRAMES_FOR_ANALYSIS = 10  # 球员最少可见帧数，低于此值不分析
+AI_MIN_FRAMES_FOR_ANALYSIS = 10  # 鐞冨憳鏈€灏戝彲瑙佸抚鏁帮紝浣庝簬姝ゅ€间笉鍒嗘瀽
 
-# ---- LLM Prompt 模板 ----
+# ---- LLM Prompt 妯℃澘 ----
 
-ANALYSIS_SYSTEM_PROMPT = """你是一位经验丰富的职业篮球教练兼运动生物力学专家，有 20 年执教经验。
-你擅长通过运动员的姿态数据（人体关键点运动轨迹的统计摘要）分析球员的技术特点和不足之处。
+ANALYSIS_SYSTEM_PROMPT = """浣犳槸涓€浣嶇粡楠屼赴瀵岀殑鑱屼笟绡悆鏁欑粌鍏艰繍鍔ㄧ敓鐗╁姏瀛︿笓瀹讹紝鏈?20 骞存墽鏁欑粡楠屻€?
+浣犳搮闀块€氳繃杩愬姩鍛樼殑濮挎€佹暟鎹紙浜轰綋鍏抽敭鐐硅繍鍔ㄨ建杩圭殑缁熻鎽樿锛夊垎鏋愮悆鍛樼殑鎶€鏈壒鐐瑰拰涓嶈冻涔嬪銆?
 
-你的分析风格：严厉、中肯、一针见血。不说客套话，不泛泛而谈。
-看到问题就直接指出来，看到优点就明确肯定。每个判断都要基于数据说话。
+浣犵殑鍒嗘瀽椋庢牸锛氫弗鍘夈€佷腑鑲€佷竴閽堣琛€銆備笉璇村濂楄瘽锛屼笉娉涙硾鑰岃皥銆?
+鐪嬪埌闂灏辩洿鎺ユ寚鍑烘潵锛岀湅鍒颁紭鐐瑰氨鏄庣‘鑲畾銆傛瘡涓垽鏂兘瑕佸熀浜庢暟鎹璇濄€?
 
-你将收到一名篮球球员的结构化姿态统计数据，包括：
-- 运动轨迹（位移量、速度、方向偏好）
-- 姿态对称性（左右肩/髋/膝/腕高度差）
-- 身体角度（膝关节角度、肘关节角度、躯干倾斜角）
-- 姿态分布（站立、蹲防、起跳、手臂上举等时间占比）
-- 运动流畅度
-- 可见帧数与平均关键点置信度
+浣犲皢鏀跺埌涓€鍚嶇鐞冪悆鍛樼殑缁撴瀯鍖栧Э鎬佺粺璁℃暟鎹紝鍖呮嫭锛?
+- 杩愬姩杞ㄨ抗锛堜綅绉婚噺銆侀€熷害銆佹柟鍚戝亸濂斤級
+- 濮挎€佸绉版€э紙宸﹀彸鑲?楂?鑶?鑵曢珮搴﹀樊锛?
+- 韬綋瑙掑害锛堣啙鍏宠妭瑙掑害銆佽倶鍏宠妭瑙掑害銆佽函骞插€炬枩瑙掞級
+- 濮挎€佸垎甯冿紙绔欑珛銆佽共闃层€佽捣璺炽€佹墜鑷備笂涓剧瓑鏃堕棿鍗犳瘮锛?
+- 杩愬姩娴佺晠搴?
+- 鍙甯ф暟涓庡钩鍧囧叧閿偣缃俊搴?
 
-**重要**：数据不足不等于视频短。即使是长视频，如果关键帧缺失、关键点置信度低、拍摄角度不好，也可能导致某些维度数据不足。遇到数据不足的情况，不要在分析中强行下结论，而要在"补充观察建议"一栏中明确指出缺少什么视角/数据，以及为什么需要它们。"""
+**閲嶈**锛氭暟鎹笉瓒充笉绛変簬瑙嗛鐭€傚嵆浣挎槸闀胯棰戯紝濡傛灉鍏抽敭甯х己澶便€佸叧閿偣缃俊搴︿綆銆佹媿鎽勮搴︿笉濂斤紝涔熷彲鑳藉鑷存煇浜涚淮搴︽暟鎹笉瓒炽€傞亣鍒版暟鎹笉瓒崇殑鎯呭喌锛屼笉瑕佸湪鍒嗘瀽涓己琛屼笅缁撹锛岃€岃鍦?琛ュ厖瑙傚療寤鸿"涓€鏍忎腑鏄庣‘鎸囧嚭缂哄皯浠€涔堣瑙?鏁版嵁锛屼互鍙婁负浠€涔堥渶瑕佸畠浠€?""
 
-ANALYSIS_USER_PROMPT_TEMPLATE = """请分析以下篮球球员的姿态数据，给出技术优缺点分析。
+ANALYSIS_USER_PROMPT_TEMPLATE = """璇峰垎鏋愪互涓嬬鐞冪悆鍛樼殑濮挎€佹暟鎹紝缁欏嚭鎶€鏈紭缂虹偣鍒嗘瀽銆?
 
-## 球员基本信息
-- 可见帧数：{total_frames_visible} / {total_frames}（可见率 {visibility_pct}%）
-- 时长：约 {duration_seconds:.1f} 秒
-- 平均关键点置信度：{avg_confidence:.2f}
+## 鐞冨憳鍩烘湰淇℃伅
+- 鍙甯ф暟锛歿total_frames_visible} / {total_frames}锛堝彲瑙佺巼 {visibility_pct}%锛?
+- 鏃堕暱锛氱害 {duration_seconds:.1f} 绉?
+- 骞冲潎鍏抽敭鐐圭疆淇″害锛歿avg_confidence:.2f}
 
-## 运动数据
+## 杩愬姩鏁版嵁
 {movement_stats}
 
-## 姿态对称性
+## 濮挎€佸绉版€?
 {symmetry_stats}
 
-## 身体角度
+## 韬綋瑙掑害
 {angle_stats}
 
-## 姿态分布
+## 濮挎€佸垎甯?
 {pose_distribution}
 
-## 运动流畅度
+## 杩愬姩娴佺晠搴?
 {smoothness}
 
 ---
 
 {data_insufficient_section}
 
-请按照以下格式输出（用中文），严格遵循 Markdown 格式：
+璇锋寜鐓т互涓嬫牸寮忚緭鍑猴紙鐢ㄤ腑鏂囷級锛屼弗鏍奸伒寰?Markdown 鏍煎紡锛?
 
-## 优势 (Strengths)
-- [基于数据列出 3-5 条具体的技术优势；如果数据不足以判断，写明"数据不足，无法确定"]
+## 浼樺娍 (Strengths)
+- [鍩轰簬鏁版嵁鍒楀嚭 3-5 鏉″叿浣撶殑鎶€鏈紭鍔匡紱濡傛灉鏁版嵁涓嶈冻浠ュ垽鏂紝鍐欐槑"鏁版嵁涓嶈冻锛屾棤娉曠‘瀹?]
 
-## 短板 (Weaknesses)
-- [基于数据列出 3-5 条具体的问题和短板，直接指出，不要委婉；如果数据不足以判断，写明"数据不足，无法确定"]
+## 鐭澘 (Weaknesses)
+- [鍩轰簬鏁版嵁鍒楀嚭 3-5 鏉″叿浣撶殑闂鍜岀煭鏉匡紝鐩存帴鎸囧嚭锛屼笉瑕佸濠夛紱濡傛灉鏁版嵁涓嶈冻浠ュ垽鏂紝鍐欐槑"鏁版嵁涓嶈冻锛屾棤娉曠‘瀹?]
 
-## 总体评价 (Summary)
-[2-3 句话的总评，概括该球员的核心特点和定位；数据不足时诚实说明]
+## 鎬讳綋璇勪环 (Summary)
+[2-3 鍙ヨ瘽鐨勬€昏瘎锛屾鎷鐞冨憳鐨勬牳蹇冪壒鐐瑰拰瀹氫綅锛涙暟鎹笉瓒虫椂璇氬疄璇存槑]
 
-## 改进建议 (Recommendations)
-- [2-3 条可操作的、针对短板的训练建议]
+## 鏀硅繘寤鸿 (Recommendations)
+- [2-3 鏉″彲鎿嶄綔鐨勩€侀拡瀵圭煭鏉跨殑璁粌寤鸿]
 
-## 补充观察建议 (Additional Angles Needed)
-- [如果当前数据不足以做出完整评估，请列出需要补充的观察角度，例如：需要正面视角来判断投篮手型、需要侧身视角来看防守滑步、需要全场镜头来看无球跑位等。即使是长视频，如果关键帧缺失或置信度低导致某些维度无法分析，也要明确指出缺少什么视角/数据。如果数据充分，此栏写"当前数据基本充分"]"""
+## 琛ュ厖瑙傚療寤鸿 (Additional Angles Needed)
+- [濡傛灉褰撳墠鏁版嵁涓嶈冻浠ュ仛鍑哄畬鏁磋瘎浼帮紝璇峰垪鍑洪渶瑕佽ˉ鍏呯殑瑙傚療瑙掑害锛屼緥濡傦細闇€瑕佹闈㈣瑙掓潵鍒ゆ柇鎶曠鎵嬪瀷銆侀渶瑕佷晶韬瑙掓潵鐪嬮槻瀹堟粦姝ャ€侀渶瑕佸叏鍦洪暅澶存潵鐪嬫棤鐞冭窇浣嶇瓑銆傚嵆浣挎槸闀胯棰戯紝濡傛灉鍏抽敭甯х己澶辨垨缃俊搴︿綆瀵艰嚧鏌愪簺缁村害鏃犳硶鍒嗘瀽锛屼篃瑕佹槑纭寚鍑虹己灏戜粈涔堣瑙?鏁版嵁銆傚鏋滄暟鎹厖鍒嗭紝姝ゆ爮鍐?褰撳墠鏁版嵁鍩烘湰鍏呭垎"]"""

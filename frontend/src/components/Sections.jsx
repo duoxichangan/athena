@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import lanmouBadge from '../assets/lanmou-badge.png'
 
 /* ---------------- Header ---------------- */
 export function Header() {
@@ -7,7 +8,7 @@ export function Header() {
       <div className="glass-nav">
         <div className="nav-inner">
           <div className="nav-brand">
-            <AthenaLogo />
+            <img className="brand-badge" src={lanmouBadge} alt="篮眸徽标" />
             <span className="brand-title">篮眸</span>
             <span className="brand-sub hidden-sm">运动员姿态识别平台</span>
           </div>
@@ -227,18 +228,6 @@ export function Footer() {
 }
 
 /* ---------------- Icons ---------------- */
-function AthenaLogo() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-label="篮眸">
-      <circle cx="16" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
-      <line x1="16" y1="11" x2="16" y2="18" stroke="currentColor" strokeWidth="2" />
-      <line x1="16" y1="14" x2="10" y2="20" stroke="currentColor" strokeWidth="2" />
-      <line x1="16" y1="14" x2="22" y2="20" stroke="currentColor" strokeWidth="2" />
-      <line x1="16" y1="18" x2="10" y2="26" stroke="currentColor" strokeWidth="2" />
-      <line x1="16" y1="18" x2="22" y2="26" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  )
-}
 function UploadIcon() {
   return (
     <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
