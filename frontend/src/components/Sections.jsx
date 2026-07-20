@@ -21,7 +21,6 @@ export function Header() {
 
 /* ---------------- Upload ---------------- */
 export function UploadSection({ onSubmit }) {
-  const [file, setFile] = useState(null)
   const [drag, setDrag] = useState(false)
   const inputRef = useRef(null)
 
@@ -36,13 +35,7 @@ export function UploadSection({ onSubmit }) {
       alert('文件大小超过 200MB 限制')
       return
     }
-    setFile(f)
-  }
-
-  function formatSize(b) {
-    if (b < 1024) return b + ' B'
-    if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB'
-    return (b / (1024 * 1024)).toFixed(1) + ' MB'
+    onSubmit(f)
   }
 
   return (
@@ -87,18 +80,6 @@ export function UploadSection({ onSubmit }) {
             />
           </div>
 
-          {file && (
-            <div className="upload-info-bar">
-              <span className="filename">{file.name}</span>
-              <span className="file-size">{formatSize(file.size)}</span>
-              <button className="btn-primary" onClick={() => onSubmit(file)}>
-                <span className="btn-primary-label">开始处理</span>
-              </button>
-              <button className="btn-ghost" onClick={() => setFile(null)}>
-                <span className="btn-ghost-label">取消</span>
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </section>
@@ -311,7 +292,7 @@ export function Footer() {
       <div className="glass-footer">
         <div className="footer-inner">
           <span className="footer-text">篮眸 运动员姿态识别平台</span>
-          <span className="footer-sub">Powered by Ultralytics YOLO Pose · FastAPI · DeepSeek</span>
+          <span className="footer-sub">Powered by Ultralytics YOLO Pose · Group 13</span>
         </div>
       </div>
     </footer>

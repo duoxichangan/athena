@@ -79,7 +79,7 @@ GROUP_COLORS = {
 # 仅从环境变量读取密钥，避免把真实密钥写入仓库。
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com/anthropic")
-DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-v4-pro")
 AI_MAX_TOKENS = int(os.getenv("DEEPSEEK_MAX_TOKENS", "2048"))
 AI_TEMPERATURE = float(os.getenv("DEEPSEEK_TEMPERATURE", "0.7"))
 AI_TIMEOUT_SECONDS = int(os.getenv("DEEPSEEK_TIMEOUT_SECONDS", "90"))

@@ -5,6 +5,7 @@ Athena — 运动员姿态识别平台 Web 服务 (FastAPI)
 from __future__ import annotations
 
 import asyncio
+import subprocess
 import uuid
 from pathlib import Path
 
@@ -399,6 +400,18 @@ async def get_analysis(task_id: str, track_id: int):
 async def _process_video(task_id: str, video_path: Path):
     """在线程池中执行视频处理，完成后更新任务状态。"""
     try:
+        # WebM → MP4 转换，避免 OpenCV FFMPEG VP80 解码警告
+        if video_path.suffix.lower() == '.webm':
+            mp4_path = video_path.with_suffix('.mp4')
+            subprocess.run(
+                ['ffmpeg', '-y', '-i', str(video_path), '-c:v', 'libx264', '-preset', 'fast',
+                 '-crf', '23', '-an', str(mp4_path)],
+                capture_output=True,
+            )
+            if mp4_path.exists() and mp4_path.stat().st_size > 0:
+                video_path.unlink()  # 删除原始 webm
+                video_path = mp4_path
+
         loop = asyncio.get_running_loop()
         result = await loop.run_in_executor(
             None,

@@ -541,7 +541,7 @@ class PlayerAnalyzer:
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
-            self._client = httpx.AsyncClient(timeout=httpx.Timeout(self.timeout))
+            self._client = httpx.AsyncClient(timeout=httpx.Timeout(self.timeout), trust_env=False)
         return self._client
 
     async def analyze(
@@ -582,6 +582,8 @@ class PlayerAnalyzer:
             "messages": [
                 {"role": "user", "content": user_message},
             ],
+            # 禁用扩展思考，避免推理模型长时间"思考"导致超时
+            "thinking": {"type": "disabled"},
         }
 
         client = await self._get_client()
@@ -591,8 +593,14 @@ class PlayerAnalyzer:
         data = response.json()
 
         # Anthropic Messages 格式: content 是列表
+        # 注意：推理模型可能返回多个 block（如 thinking + text），
+        # 需要找到 type 为 "text" 的 block 提取文本
         content = data.get("content", [])
         if isinstance(content, list) and len(content) > 0:
+            for block in content:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    return block.get("text", "")
+            # 回退：如果没有 text block，尝试取第一个的 text 字段
             return content[0].get("text", "")
         elif isinstance(content, str):
             return content

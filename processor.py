@@ -24,10 +24,9 @@ def _get_video_writer(path: str, fps: float, size: tuple[int, int]):
     """
     # 优先级：WebM/VP80 (浏览器原生支持) > H.264 > XVID > mp4v
     candidates = [
-        ("VP80", ".webm"),
         ("avc1", ".mp4"),
-        ("XVID", ".avi"),
         ("mp4v", ".mp4"),
+        ("XVID", ".avi"),
     ]
 
     for codec_str, ext in candidates:

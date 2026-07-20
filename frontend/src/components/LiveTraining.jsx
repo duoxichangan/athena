@@ -79,7 +79,7 @@ export default function LiveTraining() {
         }
         setError('')
       } catch {
-        setError('实时标注暂不可用，本地画面将继续显示。')
+        setError('')
       } finally {
         requestPendingRef.current = false
       }

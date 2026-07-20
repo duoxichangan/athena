@@ -23,56 +23,6 @@ export default function App() {
 
   useEffect(() => () => stopPolling(), [])
 
-  useEffect(() => {
-    const selector = [
-      '.glass-card',
-      '.glass-nav',
-      '.glass-footer',
-      '.stat-card',
-      '.player-card',
-      '.upload-zone',
-      '.upload-info-bar',
-      '.link-btn',
-      '.btn-primary',
-      '.btn-ghost',
-      '.btn-ai',
-      '.btn-reanalyze',
-      '.analysis-result',
-    ].join(',')
-
-    let activeSurface = null
-
-    const move = (e) => {
-      document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`)
-      document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`)
-
-      const surface = e.target.closest?.(selector)
-      if (surface !== activeSurface) {
-        activeSurface?.classList.remove('glass-hover')
-        activeSurface = surface
-        activeSurface?.classList.add('glass-hover')
-      }
-      if (!surface) return
-
-      const rect = surface.getBoundingClientRect()
-      surface.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`)
-      surface.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`)
-      surface.style.setProperty('--tilt-x', `${((e.clientY - rect.top) / rect.height - 0.5) * -8}deg`)
-      surface.style.setProperty('--tilt-y', `${((e.clientX - rect.left) / rect.width - 0.5) * 8}deg`)
-    }
-
-    const leave = () => {
-      activeSurface?.classList.remove('glass-hover')
-      activeSurface = null
-    }
-
-    window.addEventListener('pointermove', move, { passive: true })
-    window.addEventListener('pointerleave', leave)
-    return () => {
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerleave', leave)
-    }
-  }, [])
 
   function stopPolling() {
     if (timerRef.current) {
@@ -197,18 +147,16 @@ export default function App() {
 
         {phase === 'done' && result && (
           <section className="section">
-            <StatsGrid result={result} />
-
-            <h2 className="player-count-title">
-              跟踪到 <span className="player-count-num">{result.unique_players}</span> 名球员
-            </h2>
-
-            <div className="sandbox-launch-wrap">
+            <div className="result-toolbar">
+              <h2 className="player-count-title">
+                跟踪到 <span className="player-count-num">{result.unique_players}</span> 名球员
+              </h2>
               <button className="btn-primary sandbox-launch" onClick={() => setSandboxOpen(true)} disabled={!poseData}>
                 <span className="btn-primary-label">{poseData ? '打开训练战术沙盘' : '正在载入沙盘数据…'}</span>
               </button>
-              <span>多人位置 · 移动轨迹 · 视频同步</span>
             </div>
+
+            <StatsGrid result={result} />
 
             <div className="player-gallery">
               {players.map((p) => (
