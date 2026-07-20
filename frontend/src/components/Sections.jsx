@@ -49,8 +49,9 @@ export function UploadSection({ onSubmit }) {
     <section className="section narrow">
       <div className="glass-card upload-shell">
         <div className="upload-card">
-          <h1 className="hero-title">上传视频，开启分析</h1>
-          <p className="hero-sub">支持 MP4 / AVI / MOV / MKV / WebM 格式 · 最大 200MB</p>
+          <span className="mode-kicker">赛后分析</span>
+          <h1 className="hero-title">录像复盘</h1>
+          <p className="hero-sub">上传完整训练视频，生成球员姿态、轨迹与 AI 建议 · 最大 200MB</p>
 
           <div
             className={`upload-zone ${drag ? 'dragover' : ''}`}

@@ -20,6 +20,7 @@ export default defineConfig({
       '/player-clip': 'http://127.0.0.1:8000',
       '/analyze': 'http://127.0.0.1:8000',
       '/outputs': 'http://127.0.0.1:8000',
+      '/live': 'http://127.0.0.1:8000',
     },
   },
 })

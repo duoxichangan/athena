@@ -38,3 +38,27 @@ export async function analyzePlayer(taskId, trackId, force = false) {
   const res = await fetch(url, { method: 'POST' })
   return res.json()
 }
+
+export async function startLiveSession() {
+  const res = await fetch('/live/start', { method: 'POST' })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.detail || '无法启动实时分析')
+  return data
+}
+
+export async function sendLiveFrame(sessionId, blob) {
+  const form = new FormData()
+  form.append('file', blob, 'frame.jpg')
+  const res = await fetch(`/live/frame/${sessionId}`, { method: 'POST', body: form })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.detail || '实时帧分析失败')
+  return data
+}
+
+export async function stopLiveSession(sessionId) {
+  const res = await fetch(`/live/stop/${sessionId}`, { method: 'POST' })
+  if (res.status === 404) return { session_id: sessionId, status: 'stopped' }
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.detail || '无法结束实时分析')
+  return data
+}

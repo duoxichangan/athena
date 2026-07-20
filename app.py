@@ -8,7 +8,9 @@ import asyncio
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, File, Request, UploadFile
+import cv2
+import numpy as np
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -22,6 +24,7 @@ from config import (
     UPLOAD_DIR,
 )
 from processor import VideoProcessor
+from live_processor import LiveFrameProcessor
 
 # ---------------------------------------------------------------------------
 # App setup
@@ -45,6 +48,7 @@ processor: VideoProcessor | None = None
 analyzer: PlayerAnalyzer | None = None
 # 任务状态存储：{task_id: {"status": "processing"|"done"|"error", "result": {...}}}
 tasks: dict[str, dict] = {}
+live_sessions: dict[str, LiveFrameProcessor] = {}
 
 # ---------------------------------------------------------------------------
 # Lifespan
@@ -62,7 +66,56 @@ async def startup():
 
 
 # ---------------------------------------------------------------------------
-# Routes
+# Live training lifecycle and routes
+# ---------------------------------------------------------------------------
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    live_sessions.clear()
+
+
+@app.post("/live/start")
+async def live_start():
+    """Start an isolated live camera tracking session."""
+    session_id = uuid.uuid4().hex[:12]
+    loop = asyncio.get_running_loop()
+    live_sessions[session_id] = await loop.run_in_executor(None, LiveFrameProcessor)
+    return {"session_id": session_id, "status": "live"}
+
+
+@app.post("/live/frame/{session_id}")
+async def live_frame(session_id: str, file: UploadFile = File(...)):
+    """Analyze one browser-captured frame without storing it on disk."""
+    frame_processor = live_sessions.get(session_id)
+    if frame_processor is None:
+        raise HTTPException(status_code=404, detail="Live session not found")
+
+    encoded = np.frombuffer(await file.read(), dtype=np.uint8)
+    frame = cv2.imdecode(encoded, cv2.IMREAD_COLOR)
+    if frame is None:
+        raise HTTPException(status_code=400, detail="Invalid image frame")
+
+    loop = asyncio.get_running_loop()
+    players = await loop.run_in_executor(None, frame_processor.process, frame)
+    return {
+        "session_id": session_id,
+        "players": players,
+        "frame_width": frame.shape[1],
+        "frame_height": frame.shape[0],
+    }
+
+
+@app.post("/live/stop/{session_id}")
+async def live_stop(session_id: str):
+    """Stop a live session and release its tracking state."""
+    if live_sessions.pop(session_id, None) is None:
+        raise HTTPException(status_code=404, detail="Live session not found")
+    return {"session_id": session_id, "status": "stopped"}
+
+
+# ---------------------------------------------------------------------------
+# Existing video-analysis routes
 # ---------------------------------------------------------------------------
 
 

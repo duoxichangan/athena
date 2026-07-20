@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Header, UploadSection, ProgressSection, StatsGrid, ActionBar, ErrorSection, Footer } from './components/Sections.jsx'
 import PlayerCard from './components/PlayerCard.jsx'
 import SandTableModal from './components/SandTableModal.jsx'
+import LiveTraining from './components/LiveTraining.jsx'
 import { buildPlayerLabels } from './components/sandboxUtils.js'
 import { uploadFile, pollStatus, fetchPoseData } from './api.js'
 
@@ -174,7 +175,12 @@ export default function App() {
       <Header />
 
       <main className="main">
-        {phase === 'idle' && <UploadSection onSubmit={handleSubmit} />}
+        {phase === 'idle' && (
+          <>
+            <LiveTraining />
+            <UploadSection onSubmit={handleSubmit} />
+          </>
+        )}
 
         {phase === 'processing' && (
           <ProgressSection elapsed={elapsed} activeStep={activeStep} />
