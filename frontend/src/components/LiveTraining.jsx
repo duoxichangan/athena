@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { sendLiveFrame, startLiveSession, stopLiveSession } from '../api.js'
 import LiveCourtMap from './LiveCourtMap.jsx'
+import SkeletonOverlay from './SkeletonOverlay.jsx'
+import JsonPanel from './JsonPanel.jsx'
 
 const CAPTURE_INTERVAL_MS = 180
 const MAX_TRAIL_POINTS = 30
@@ -11,6 +13,7 @@ export default function LiveTraining() {
   const [players, setPlayers] = useState([])
   const [history, setHistory] = useState({})
   const [mapExpanded, setMapExpanded] = useState(false)
+  const [frameSize, setFrameSize] = useState(null)
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
   const streamRef = useRef(null)
@@ -71,6 +74,9 @@ export default function LiveTraining() {
         const nextPlayers = data.players || []
         setPlayers(nextPlayers)
         setHistory((current) => appendHistory(current, nextPlayers))
+        if (data.frame_width && data.frame_height) {
+          setFrameSize({ width: data.frame_width, height: data.frame_height })
+        }
         setError('')
       } catch {
         setError('实时标注暂不可用，本地画面将继续显示。')
@@ -92,6 +98,7 @@ export default function LiveTraining() {
     setPlayers([])
     setHistory({})
     setMapExpanded(false)
+    setFrameSize(null)
     setStatus('idle')
   }
 
@@ -110,11 +117,7 @@ export default function LiveTraining() {
           <p>电脑摄像头本地预览，AI 抽帧识别球员并同步半场点位。</p>
         </div>
 
-        {status === 'idle' ? (
-          <button className="btn-primary live-start-button" type="button" onClick={startTraining}>
-            <span className="btn-primary-label">开启实时训练</span>
-          </button>
-        ) : (
+        {status !== 'idle' && (
           <div className="live-status-actions">
             <span><i className="device-live-dot" />{status === 'live' ? '训练中' : status === 'preview' ? '本地预览' : '正在启动'}</span>
             <button className="btn-ghost" type="button" onClick={stopTraining}>
@@ -123,22 +126,79 @@ export default function LiveTraining() {
           </div>
         )}
 
-        <div className={`live-video-stage ${status === 'idle' ? 'is-idle' : ''}`}>
+        <div
+          className={`live-video-stage ${status === 'idle' ? 'is-idle' : ''} ${status === 'starting' ? 'is-loading' : ''}`}
+          {...(status === 'idle' ? {
+            onClick: startTraining,
+            role: 'button',
+            tabIndex: 0,
+            'aria-label': '开启实时训练，调用电脑摄像头',
+            onKeyDown: (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                startTraining()
+              }
+            }
+          } : {})}
+        >
           <video ref={videoRef} autoPlay muted playsInline aria-label="实时训练画面" />
-          {status === 'idle' && <div className="live-video-placeholder">开启摄像头后，这里将显示训练画面</div>}
+          {status === 'idle' && (
+            <div className="live-video-placeholder">
+              <div className="live-video-placeholder-icon">
+                <CameraIcon />
+              </div>
+              <p className="live-video-placeholder-text">开启摄像头后，这里将显示训练画面</p>
+              <div className="live-video-placeholder-notice">
+                <InfoCircleIcon />
+                <span>请允许浏览器使用摄像头权限</span>
+              </div>
+            </div>
+          )}
+          {status === 'starting' && (
+            <div className="live-video-loading">
+              <div className="live-video-spinner" />
+              <p className="live-video-loading-text">正在启动摄像头...</p>
+            </div>
+          )}
           {status !== 'idle' && (
-            <LiveCourtMap
-              players={players}
-              history={history}
-              expanded={mapExpanded}
-              onExpand={() => setMapExpanded((value) => !value)}
-            />
+            <>
+              <SkeletonOverlay players={players} />
+              <LiveCourtMap
+                players={players}
+                history={history}
+                expanded={mapExpanded}
+                onExpand={() => setMapExpanded((value) => !value)}
+              />
+            </>
           )}
         </div>
         <canvas ref={canvasRef} className="live-capture-canvas" aria-hidden="true" />
+        {status !== 'idle' && players.length > 0 && (
+          <JsonPanel players={players} frameWidth={frameSize?.width} frameHeight={frameSize?.height} />
+        )}
         {error && <p className="live-training-error" role="alert">{error}</p>}
       </div>
     </section>
+  )
+}
+
+function CameraIcon() {
+  return (
+    <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+      <rect x="6" y="14" width="40" height="28" rx="6" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M20 14l2-4h8l2 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="26" cy="28" r="8" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="26" cy="28" r="3" fill="currentColor" opacity="0.55" />
+    </svg>
+  )
+}
+
+function InfoCircleIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <circle cx="7.5" cy="7.5" r="7" stroke="currentColor" strokeWidth="1.1" />
+      <path d="M7.5 6.5v4.5M7.5 4.5v.01" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
   )
 }
 

@@ -56,14 +56,36 @@ class LiveFrameProcessor:
         track_ids = boxes.id.cpu().tolist()
         xyxy = boxes.xyxy.cpu().tolist()
         confidences = boxes.conf.cpu().tolist() if boxes.conf is not None else []
+
+        # Extract keypoints from the pose model
+        keypoints_list = []
+        kpts = results[0].keypoints
+        if kpts is not None and kpts.xy is not None:
+            kpts_xy = kpts.xy.cpu().tolist()
+            kpts_conf = kpts.conf.cpu().tolist() if kpts.conf is not None else []
+            for i, kp_xy in enumerate(kpts_xy):
+                k_conf = kpts_conf[i] if i < len(kpts_conf) else []
+                keypoints = []
+                for j, (kx, ky) in enumerate(kp_xy):
+                    kc = float(k_conf[j]) if j < len(k_conf) else 0.0
+                    keypoints.append({
+                        "x": kx / max(width, 1),
+                        "y": ky / max(height, 1),
+                        "confidence": kc,
+                    })
+                keypoints_list.append(keypoints)
+
         players = []
         for index, (track_id, bbox) in enumerate(zip(track_ids, xyxy)):
             x, y = bbox_bottom_center(bbox, width, height)
             confidence = float(confidences[index]) if index < len(confidences) else 0.0
-            players.append({
+            player = {
                 "track_id": int(track_id),
                 "x": x,
                 "y": y,
                 "confidence": confidence,
-            })
+            }
+            if index < len(keypoints_list):
+                player["keypoints"] = keypoints_list[index]
+            players.append(player)
         return players

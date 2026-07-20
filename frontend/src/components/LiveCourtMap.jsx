@@ -3,10 +3,6 @@ const PLAYER_COLORS = ['#ff6b35', '#35d6ff', '#d968ff', '#ffe45e', '#66f28f', '#
 export default function LiveCourtMap({ players = [], history = {}, onExpand, expanded = false }) {
   return (
     <section className={`live-court-map ${expanded ? 'is-expanded' : ''}`} aria-label="实时半场位置图">
-      <header className="live-court-map-head">
-        <strong>半场点位</strong>
-        <span>相对位置</span>
-      </header>
       <button
         type="button"
         className="live-court-stage"
@@ -25,7 +21,7 @@ export default function LiveCourtMap({ players = [], history = {}, onExpand, exp
           if (recent.length < 2) return null
           return (
             <svg key={`trail-${trackId}`} className="live-court-trail" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              <polyline points={recent.map((point) => `${point.x * 100},${point.y * 100}`).join(' ')} style={{ stroke: color }} />
+              <polyline points={recent.map((point) => `${5 + point.x * 90},${5 + point.y * 90}`).join(' ')} style={{ stroke: color }} />
             </svg>
           )
         })}
@@ -36,7 +32,7 @@ export default function LiveCourtMap({ players = [], history = {}, onExpand, exp
               key={player.track_id}
               className="live-player-dot"
               aria-label={`学员 ${player.track_id}`}
-              style={{ left: `${player.x * 100}%`, top: `${player.y * 100}%`, '--player-color': color }}
+              style={{ left: `${5 + player.x * 90}%`, top: `${5 + player.y * 90}%`, '--player-color': color }}
             >
               <b>{player.track_id}</b>
             </span>

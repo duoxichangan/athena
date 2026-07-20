@@ -16,6 +16,7 @@ export default function App() {
   const [activeStep, setActiveStep] = useState(0)
   const [sandboxOpen, setSandboxOpen] = useState(false)
   const [customPlayerNames, setCustomPlayerNames] = useState({})
+  const [uploadedFileUrl, setUploadedFileUrl] = useState(null)
 
   const timerRef = useRef(null)
   const startRef = useRef(0)
@@ -96,6 +97,10 @@ export default function App() {
     setPoseData(null)
     setCustomPlayerNames({})
 
+    // Create object URL for video preview during processing
+    if (uploadedFileUrl) URL.revokeObjectURL(uploadedFileUrl)
+    setUploadedFileUrl(URL.createObjectURL(file))
+
     try {
       const data = await uploadFile(file)
       if (data.error) {
@@ -153,6 +158,10 @@ export default function App() {
     setElapsed(0)
     setActiveStep(0)
     setCustomPlayerNames({})
+    if (uploadedFileUrl) {
+      URL.revokeObjectURL(uploadedFileUrl)
+      setUploadedFileUrl(null)
+    }
   }
 
   // Build player list
@@ -183,7 +192,7 @@ export default function App() {
         )}
 
         {phase === 'processing' && (
-          <ProgressSection elapsed={elapsed} activeStep={activeStep} />
+          <ProgressSection elapsed={elapsed} activeStep={activeStep} videoUrl={uploadedFileUrl} />
         )}
 
         {phase === 'done' && result && (

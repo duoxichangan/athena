@@ -46,12 +46,15 @@ export function UploadSection({ onSubmit }) {
   }
 
   return (
-    <section className="section narrow">
+    <section className="section">
       <div className="glass-card upload-shell">
-        <div className="upload-card">
+        <div className="upload-copy">
           <span className="mode-kicker">赛后分析</span>
-          <h1 className="hero-title">录像复盘</h1>
-          <p className="hero-sub">上传完整训练视频，生成球员姿态、轨迹与 AI 建议 · 最大 200MB</p>
+          <h1 className="upload-title">录像复盘</h1>
+          <p className="upload-desc">上传完整训练视频，生成球员姿态、轨迹与 AI 建议 · 最大 200MB</p>
+        </div>
+
+        <div className="upload-card">
 
           <div
             className={`upload-zone ${drag ? 'dragover' : ''}`}
@@ -103,32 +106,119 @@ export function UploadSection({ onSubmit }) {
 }
 
 /* ---------------- Progress ---------------- */
-export function ProgressSection({ elapsed, activeStep }) {
-  const steps = ['上传', '处理', '完成']
+const FUN_TIPS = [
+  '正在飞速加载中… 🚀',
+  '篮球在飞，数据在跑 🏀',
+  'AI 正在逐帧分析你的英姿…',
+  '姿势识别引擎全力运转中 ⚡',
+  '正在追踪每一个精彩瞬间…',
+  '准备为你生成专业分析报告 📊',
+  '请稍候，精彩即将呈现 ✨',
+  '骨骼关键点检测进行中…',
+  '正在计算球员移动轨迹 📐',
+  '别眨眼，好戏马上开场 🎬',
+  '你的高光时刻即将揭晓 🌟',
+  '正在召唤 DeepSeek 解读战术… 🧠',
+  '数据加载中，先来一个三分球 🎯',
+  '每一帧都在变魔法 🪄',
+]
+
+export function ProgressSection({ elapsed, activeStep, videoUrl }) {
+  const phases = [
+    { key: 'upload', label: '上传', icon: '📤' },
+    { key: 'process', label: '分析', icon: '🔍' },
+    { key: 'done', label: '完成', icon: '✨' },
+  ]
   const mins = Math.floor(elapsed / 60)
   const secs = elapsed % 60
   const timeStr = `${mins}:${String(secs).padStart(2, '0')}`
 
+  const [tipIndex, setTipIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIndex((i) => (i + 1) % FUN_TIPS.length)
+    }, 2800)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <section className="section narrow">
+    <section className="section">
+      {/* Video preview card */}
+      {videoUrl && (
+        <div className="glass-card video-preview-card">
+          <div className="video-preview-inner">
+            <div className="video-preview-stage">
+              <video
+                src={videoUrl}
+                controls
+                muted
+                autoPlay
+                playsInline
+                loop
+                className="video-preview-el"
+              />
+              <div className="video-preview-overlay">
+                <span className="video-preview-badge">正在分析此录像</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="glass-card progress-shell">
         <div className="progress-card">
-          <div className="steps">
-            {steps.map((label, i) => (
-              <div
-                key={label}
-                className={`step ${i < activeStep ? 'done' : i === activeStep ? 'active' : ''}`}
-              >
-                <div className="step-dot" />
-                <span>{label}</span>
+          {/* Phase indicator — elegant rings + connectors */}
+          <div className="phase-track">
+            {phases.map((p, i) => (
+              <div className="phase-node-group" key={p.key}>
+                <div className="phase-ring-wrap">
+                  <div
+                    className={`phase-ring ${
+                      i < activeStep ? 'is-done' : i === activeStep ? 'is-active' : ''
+                    }`}
+                  >
+                    {i < activeStep ? (
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 8.5L6.5 12L13 5" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    ) : (
+                      <span className="phase-ring-icon">{p.icon}</span>
+                    )}
+                  </div>
+                  <span className={`phase-ring-label ${i === activeStep ? 'is-active' : ''}`}>
+                    {p.label}
+                  </span>
+                </div>
+                {i < phases.length - 1 && (
+                  <div className={`phase-connector ${i < activeStep ? 'is-done' : ''}`} />
+                )}
               </div>
             ))}
           </div>
-          <div className="progress-bar-track">
-            <div className="progress-bar-shimmer" />
+
+          {/* Activity wave — subtle animated dots instead of chunky bar */}
+          <div className="activity-wave">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <span
+                key={i}
+                className="activity-dot"
+                style={{ animationDelay: `${i * 0.18}s` }}
+              />
+            ))}
           </div>
-          <p className="progress-text">正在处理中... 已用时 {mins} 分 {String(secs).padStart(2, '0')} 秒</p>
-          <p className="progress-time">已用时 {timeStr}</p>
+
+          <div className="progress-loader">
+            <div className="bball-stage">
+              <div className="bball" />
+              <div className="bball-shadow" />
+              <span className="bball-spark bball-spark--1" />
+              <span className="bball-spark bball-spark--2" />
+              <span className="bball-spark bball-spark--3" />
+            </div>
+            <p key={tipIndex} className="progress-fun-tip">{FUN_TIPS[tipIndex]}</p>
+            <p className="progress-elapsed">已用时 {timeStr}</p>
+          </div>
         </div>
       </div>
     </section>
@@ -231,10 +321,10 @@ export function Footer() {
 /* ---------------- Icons ---------------- */
 function UploadIcon() {
   return (
-    <svg width="46" height="46" viewBox="0 0 48 48" fill="none">
-      <rect x="4" y="4" width="40" height="40" rx="20" stroke="currentColor" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.45" />
-      <path d="M24 32V14M24 14L16 22M24 14L32 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M12 36V40C12 41.1 12.9 42 14 42H34C35.1 42 36 41.1 36 40V36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      <rect x="7" y="5" width="30" height="34" rx="5" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M22 28V14M22 14L15 21M22 14L29 21" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13 34h18" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" opacity="0.5" />
     </svg>
   )
 }

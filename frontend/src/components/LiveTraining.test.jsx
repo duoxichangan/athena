@@ -27,7 +27,7 @@ describe('LiveTraining', () => {
     })
 
     render(<LiveTraining />)
-    await userEvent.click(screen.getByRole('button', { name: '开启实时训练' }))
+    await userEvent.click(screen.getByRole('button', { name: '开启实时训练，调用电脑摄像头' }))
 
     expect(await screen.findByText('无法访问电脑摄像头，请检查浏览器权限。')).toBeTruthy()
   })
@@ -43,7 +43,7 @@ describe('LiveTraining', () => {
     stopLiveSession.mockResolvedValue({ session_id: 'live-1', status: 'stopped' })
 
     const view = render(<LiveTraining />)
-    await userEvent.click(screen.getByRole('button', { name: '开启实时训练' }))
+    await userEvent.click(screen.getByRole('button', { name: '开启实时训练，调用电脑摄像头' }))
 
     expect(await screen.findByLabelText('实时半场位置图')).toBeTruthy()
     expect(screen.getByLabelText('实时半场位置图').parentElement.className).toContain('live-video-stage')
@@ -64,7 +64,7 @@ describe('LiveTraining', () => {
     vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
 
     render(<LiveTraining />)
-    await userEvent.click(screen.getByRole('button', { name: '开启实时训练' }))
+    await userEvent.click(screen.getByRole('button', { name: '开启实时训练，调用电脑摄像头' }))
 
     await waitFor(() => expect(screen.queryByText('开启摄像头后，这里将显示训练画面')).toBeNull())
     expect(screen.getByLabelText('实时训练画面').srcObject).toBe(stream)
@@ -83,18 +83,18 @@ describe('LiveTraining', () => {
     startLiveSession.mockRejectedValue(new Error('backend unavailable'))
 
     render(<LiveTraining />)
-    await userEvent.click(screen.getByRole('button', { name: '开启实时训练' }))
+    await userEvent.click(screen.getByRole('button', { name: '开启实时训练，调用电脑摄像头' }))
 
     expect(await screen.findByText('AI 实时标注暂不可用，摄像头画面仍可继续查看。')).toBeTruthy()
     expect(screen.getByLabelText('实时训练画面').srcObject).toBe(stream)
     expect(stopTrack).not.toHaveBeenCalled()
   })
 
-  it('centers the real-time training card in the page container', () => {
+  it('renders the real-time training card at full page width', () => {
     render(<LiveTraining />)
-    expect(screen.getByRole('region', { name: '实时训练' })).toBeTruthy()
-
-    expect(stylesText).toMatch(/\.live-training-section\s*\{[^}]*margin-left:\s*auto;[^}]*margin-right:\s*auto;/)
+    const region = screen.getByRole('region', { name: '实时训练' })
+    expect(region).toBeTruthy()
+    expect(region.classList.contains('live-training-section')).toBe(true)
   })
 
   it('keeps only the latest 30 trail positions per player', () => {
